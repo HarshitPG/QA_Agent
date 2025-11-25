@@ -293,17 +293,16 @@ if st.button(" Generate Test Cases", type="primary", key="generate_tc"):
             st.error("Check backend logs for details: `tail -100 backend.log`")
 
 st.markdown("---")
-st.caption("Phase 6 Complete: Test Case Generation with RAG Pipeline")
+st.caption("Complete: Test Case Generation with RAG Pipeline")
 
 st.markdown("---")
 
 st.header("Phase 3: Selenium Script Generation")
 st.markdown("Generate automated Selenium WebDriver scripts from HTML pages and test cases")
 
-# Tab selection
 tab2 = st.tabs([ "🧪 Generate with Test Cases"])
 
-with tab2:
+with tab2[0]:
     st.markdown("### Generate with Test Cases & Knowledge Base")
     st.markdown("Upload HTML and use generated test cases + KB context for comprehensive automation")
     
@@ -333,7 +332,7 @@ with tab2:
     with col1:
         advanced_framework = st.selectbox(
             "Testing Framework",
-            options=["pytest", "unittest"],
+            options=["pytest"],
             index=0,
             help="Choose your preferred Python testing framework",
             key="advanced_framework"
@@ -341,7 +340,7 @@ with tab2:
     with col2:
         advanced_browser = st.selectbox(
             "Target Browser",
-            options=["chrome", "firefox", "edge"],
+            options=["chrome"],
             index=0,
             help="Browser for Selenium WebDriver",
             key="advanced_browser"
@@ -436,7 +435,7 @@ with tab2:
                             - Explicit waits for stability
                             - {result.get('test_cases_covered', 0)} test case(s) implemented
                             - {result.get('elements_mapped', 0)} HTML elements mapped
-                            - KB context: {"✓ Included" if result.get('kb_context_used') else "✗ Not used"}
+                            - KB context: {" Included" if result.get('kb_context_used') else "✗ Not used"}
                             
                             **Before Running:**
                             1. Update `driver.get()` URL to point to your actual page
@@ -452,4 +451,4 @@ with tab2:
                     st.error(f"Generation failed: {e}")
 
 st.markdown("---")
-st.caption("Phase 7 & 8 Complete: Selenium Script Generation with UI Integration")
+st.caption("Complete: Selenium Script Generation with UI Integration")
