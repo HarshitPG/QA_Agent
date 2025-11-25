@@ -1,0 +1,31 @@
+E-Shop Checkout – UI/UX Guidelines
+
+1. Form Validation
+   - Validation messages must be displayed in **red (#FF0000)**.
+   - Error text should appear directly below the input field.
+
+2. Buttons
+   - The “Pay Now” button must be **green (#28A745)**.
+   - Disabled buttons should have 50% opacity.
+
+3. Typography
+   - Use a clean, sans-serif font such as **Inter** or **Roboto**.
+   - Minimum font size: 14px for body text.
+
+4. Inputs
+   - All text input boxes must have:
+     - 1px solid #CCCCCC border
+     - 6px border-radius
+     - Padding: 8px
+
+5. Layout
+   - Checkout page should be two-column:
+     - Left: Cart + Discount
+     - Right: User Details + Payment
+
+6. Accessibility
+   - All form elements must have <label> tags.
+   - Contrast ratio must meet WCAG AA standards.
+
+7. Notification
+   - Success message “Payment Successful!” should be shown in **green (#2ECC71)**.

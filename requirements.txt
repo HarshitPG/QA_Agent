@@ -1,0 +1,26 @@
+fastapi
+uvicorn
+pydantic
+python-multipart
+streamlit
+
+# Document parsing
+unstructured
+pymupdf
+beautifulsoup4
+markdown
+
+# Embeddings + Vector DB
+sentence-transformers
+chromadb
+numpy
+tqdm
+
+# LLM providers
+requests
+groq
+python-dotenv
+
+# Automation
+selenium
+webdriver-manager

@@ -1,0 +1,15 @@
+UI / UX Guidelines (ui_guidelines.txt)
+
+- Required field errors must be shown in red and have an icon.
+- The "Submit Booking" button must be disabled until all required fields are valid and the T&C checkbox is checked.
+- Inline validation is immediate (on blur) and summary validation also shown on submit attempt.
+- Booking confirmation banner:
+   - Text: "Booking Confirmed!"
+   - Style: green background, accessible contrast, appears at top of page upon success.
+- Seat map:
+   - Available seats: clickable buttons with aria-label "Seat Row X Seat Y available".
+   - Selected seat: highlighted, with aria-pressed=true.
+- Mobile behavior:
+   - Collapsible seat map, form stacks vertically.
+- Error notifications:
+   - Use inline messages near controls and a toast summary at the top.

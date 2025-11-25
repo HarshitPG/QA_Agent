@@ -1,0 +1,20 @@
+E-Shop – Form & Front-End Validation Rules
+
+1. Name
+   - Required
+   - Minimum length: 3 characters
+
+2. Email
+   - Required
+   - Must match regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+3. Address
+   - Required
+   - Minimum length: 10 characters
+
+4. Discount Code Input
+   - Accept uppercase letters and numbers only
+   - Max length: 10
+
+5. Payment Section Validation
+   - One of Credit Card or PayPal must be selected

@@ -1,0 +1,10 @@
+{
+  "event_id": "EVT-001",
+  "rows": [
+    { "row": "A", "seats": 20 },
+    { "row": "B", "seats": 20 },
+    { "row": "C", "seats": 15 }
+  ],
+  "reserved_rows": ["A", "B"],
+  "vip_rows": ["A"]
+}

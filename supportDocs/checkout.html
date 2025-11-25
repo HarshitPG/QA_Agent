@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Shop Checkout</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Roboto", "Inter", sans-serif;
+        font-size: 14px;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      .checkout-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .left-column,
+      .right-column {
+        padding: 20px;
+      }
+
+      .section {
+        margin-bottom: 30px;
+      }
+
+      .section h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #444;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      /* Product Items */
+      .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 10px;
+      }
+
+      .product-info {
+        flex: 1;
+      }
+
+      .product-name {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .product-id {
+        color: #888;
+        font-size: 12px;
+      }
+
+      .product-price {
+        font-weight: bold;
+        color: #28a745;
+        margin: 5px 0;
+      }
+
+      .add-to-cart-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .add-to-cart-btn:hover {
+        background-color: #0056b3;
+      }
+
+      /* Cart Items */
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .cart-item-name {
+        flex: 1;
+        font-weight: 500;
+      }
+
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .quantity-input {
+        width: 60px;
+        padding: 5px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      .remove-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      /* Discount Code */
+      .discount-section {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .discount-input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      .apply-discount-btn {
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .discount-message {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+
+      .discount-message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .discount-message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Cart Summary */
+      .cart-summary {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 14px;
+      }
+
+      .summary-row.total {
+        font-weight: bold;
+        font-size: 16px;
+        border-top: 2px solid #ddd;
+        padding-top: 10px;
+        margin-top: 10px;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #333;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="number"],
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+
+      .error-message {
+        color: #ff0000;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+      }
+
+      /* Radio Buttons */
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .radio-option input[type="radio"] {
+        width: auto;
+      }
+
+      /* Pay Now Button */
+      .pay-now-btn {
+        width: 100%;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      .pay-now-btn:hover {
+        background-color: #218838;
+      }
+
+      .pay-now-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Success Message */
+      .success-notification {
+        display: none;
+        background-color: #2ecc71;
+        color: white;
+        padding: 20px;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      .success-notification.show {
+        display: block;
+      }
+
+      .empty-cart {
+        text-align: center;
+        color: #888;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>E-Shop Checkout</h1>
+
+      <div class="checkout-layout">
+        <!-- LEFT COLUMN: Cart + Discount -->
+        <div class="left-column">
+          <!-- Product Catalog -->
+          <div class="section">
+            <h2>Available Products</h2>
+            <div class="product-item">
+              <div class="product-info">
+                <div class="product-name">Wireless Mouse</div>
+                <div class="product-id">ID: P001</div>
+                <div class="product-price">$25</div>
+              </div>
+              <button
+                class="add-to-cart-btn"
+                onclick="addToCart('P001', 'Wireless Mouse', 25)"
+              >
+                Add to Cart
+              </button>
+            </div>
+            <div class="product-item">
+              <div class="product-info">
+                <div class="product-name">Mechanical Keyboard</div>
+                <div class="product-id">ID: P002</div>
+                <div class="product-price">$70</div>
+              </div>
+              <button
+                class="add-to-cart-btn"
+                onclick="addToCart('P002', 'Mechanical Keyboard', 70)"
+              >
+                Add to Cart
+              </button>
+            </div>
+            <div class="product-item">
+              <div class="product-info">
+                <div class="product-name">USB-C Cable</div>
+                <div class="product-id">ID: P003</div>
+                <div class="product-price">$10</div>
+              </div>
+              <button
+                class="add-to-cart-btn"
+                onclick="addToCart('P003', 'USB-C Cable', 10)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Shopping Cart -->
+          <div class="section">
+            <h2>Shopping Cart</h2>
+            <div id="cart-items">
+              <div class="empty-cart">Your cart is empty</div>
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-summary" id="cart-summary" style="display: none">
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="subtotal">$0</span>
+              </div>
+              <div class="summary-row" id="discount-row" style="display: none">
+                <span>Discount:</span>
+                <span id="discount-amount">$0</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping:</span>
+                <span id="shipping-cost">$0</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total:</span>
+                <span id="total-price">$0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Discount Code -->
+          <div class="section">
+            <h2>Discount Code</h2>
+            <div class="discount-section">
+              <input
+                type="text"
+                id="discount-code"
+                class="discount-input"
+                placeholder="Enter discount code"
+              />
+              <button class="apply-discount-btn" onclick="applyDiscount()">
+                Apply
+              </button>
+            </div>
+            <div id="discount-message" class="discount-message"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: User Details + Payment -->
+        <div class="right-column">
+          <!-- User Details Form -->
+          <div class="section">
+            <h2>User Details</h2>
+            <form id="checkout-form">
+              <div class="form-group">
+                <label for="name">Name *</label>
+                <input type="text" id="name" name="name" required />
+                <div class="error-message" id="name-error">
+                  Name is required (minimum 3 characters)
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required />
+                <div class="error-message" id="email-error">
+                  Please enter a valid email address
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="address">Address *</label>
+                <textarea
+                  id="address"
+                  name="address"
+                  rows="3"
+                  required
+                ></textarea>
+                <div class="error-message" id="address-error">
+                  Address is required
+                </div>
+              </div>
+
+              <!-- Shipping Method -->
+              <div class="form-group">
+                <label>Shipping Method *</label>
+                <div class="radio-group">
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      id="standard-shipping"
+                      name="shipping"
+                      value="standard"
+                      checked
+                      onchange="updateShipping()"
+                    />
+                    <label for="standard-shipping"
+                      >Standard Shipping (Free)</label
+                    >
+                  </div>
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      id="express-shipping"
+                      name="shipping"
+                      value="express"
+                      onchange="updateShipping()"
+                    />
+                    <label for="express-shipping">Express Shipping ($10)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment Method -->
+              <div class="form-group">
+                <label>Payment Method *</label>
+                <div class="radio-group">
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      id="credit-card"
+                      name="payment"
+                      value="credit-card"
+                      required
+                    />
+                    <label for="credit-card">Credit Card</label>
+                  </div>
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      id="paypal"
+                      name="payment"
+                      value="paypal"
+                    />
+                    <label for="paypal">PayPal</label>
+                  </div>
+                </div>
+                <div class="error-message" id="payment-error">
+                  Please select a payment method
+                </div>
+              </div>
+
+              <!-- Pay Now Button -->
+              <button type="button" class="pay-now-btn" onclick="submitOrder()">
+                Pay Now
+              </button>
+            </form>
+
+            <!-- Success Message -->
+            <div id="success-notification" class="success-notification">
+              Payment Successful!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Cart state
+      let cart = [];
+      let appliedDiscount = null;
+      let shippingMethod = "standard";
+
+      // Add to cart function
+      function addToCart(id, name, price) {
+        const existingItem = cart.find((item) => item.id === id);
+        if (existingItem) {
+          if (existingItem.quantity < 5) {
+            existingItem.quantity++;
+          } else {
+            alert("Maximum quantity (5) reached for this item");
+            return;
+          }
+        } else {
+          cart.push({ id, name, price, quantity: 1 });
+        }
+        updateCartDisplay();
+      }
+
+      // Remove from cart
+      function removeFromCart(id) {
+        cart = cart.filter((item) => item.id !== id);
+        updateCartDisplay();
+      }
+
+      // Update quantity
+      function updateQuantity(id, quantity) {
+        const item = cart.find((item) => item.id === id);
+        if (item) {
+          const newQty = parseInt(quantity);
+          if (newQty >= 1 && newQty <= 5) {
+            item.quantity = newQty;
+            updateCartDisplay();
+          } else if (newQty < 1) {
+            removeFromCart(id);
+          } else {
+            alert("Maximum quantity is 5");
+          }
+        }
+      }
+
+      // Update cart display
+      function updateCartDisplay() {
+        const cartItemsDiv = document.getElementById("cart-items");
+        const cartSummary = document.getElementById("cart-summary");
+
+        if (cart.length === 0) {
+          cartItemsDiv.innerHTML =
+            '<div class="empty-cart">Your cart is empty</div>';
+          cartSummary.style.display = "none";
+          return;
+        }
+
+        cartSummary.style.display = "block";
+
+        cartItemsDiv.innerHTML = cart
+          .map(
+            (item) => `
+                <div class="cart-item">
+                    <div class="cart-item-name">${item.name} - $${item.price}</div>
+                    <div class="quantity-control">
+                        <input type="number" class="quantity-input" value="${item.quantity}" 
+                               min="1" max="5" onchange="updateQuantity('${item.id}', this.value)">
+                        <button class="remove-btn" onclick="removeFromCart('${item.id}')">Remove</button>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        updatePricing();
+      }
+
+      // Calculate and update pricing
+      function updatePricing() {
+        const subtotal = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        let discount = 0;
+        let shipping = shippingMethod === "express" ? 10 : 0;
+
+        // Apply discount
+        if (appliedDiscount) {
+          if (appliedDiscount.code === "SAVE15") {
+            discount = subtotal * 0.15;
+          } else if (appliedDiscount.code === "FLAT20") {
+            discount = 20;
+          } else if (appliedDiscount.code === "FREESHIP") {
+            shipping = 0;
+          }
+        }
+
+        const total = subtotal - discount + shipping;
+
+        document.getElementById("subtotal").textContent = `$${subtotal.toFixed(
+          2
+        )}`;
+        document.getElementById(
+          "discount-amount"
+        ).textContent = `-$${discount.toFixed(2)}`;
+        document.getElementById("discount-row").style.display =
+          discount > 0 ? "flex" : "none";
+        document.getElementById(
+          "shipping-cost"
+        ).textContent = `$${shipping.toFixed(2)}`;
+        document.getElementById("total-price").textContent = `$${total.toFixed(
+          2
+        )}`;
+      }
+
+      // Apply discount code
+      function applyDiscount() {
+        const codeInput = document.getElementById("discount-code");
+        const code = codeInput.value.trim().toUpperCase();
+        const messageDiv = document.getElementById("discount-message");
+
+        const validCodes = ["SAVE15", "FREESHIP", "FLAT20"];
+
+        if (validCodes.includes(code)) {
+          if (appliedDiscount && appliedDiscount.code === code) {
+            messageDiv.textContent = "This discount code is already applied";
+            messageDiv.className = "discount-message error show";
+            return;
+          }
+          appliedDiscount = { code };
+          messageDiv.textContent = `Discount code "${code}" applied successfully!`;
+          messageDiv.className = "discount-message success";
+          messageDiv.style.display = "block";
+          updatePricing();
+        } else {
+          messageDiv.textContent = "Invalid or expired discount code";
+          messageDiv.className = "discount-message error";
+          messageDiv.style.display = "block";
+        }
+      }
+
+      // Update shipping
+      function updateShipping() {
+        const standard = document.getElementById("standard-shipping").checked;
+        shippingMethod = standard ? "standard" : "express";
+        updatePricing();
+      }
+
+      // Form validation
+      function validateForm() {
+        let isValid = true;
+
+        // Name validation
+        const name = document.getElementById("name").value.trim();
+        const nameError = document.getElementById("name-error");
+        if (name.length < 3) {
+          nameError.classList.add("show");
+          isValid = false;
+        } else {
+          nameError.classList.remove("show");
+        }
+
+        // Email validation
+        const email = document.getElementById("email").value.trim();
+        const emailError = document.getElementById("email-error");
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          emailError.classList.add("show");
+          isValid = false;
+        } else {
+          emailError.classList.remove("show");
+        }
+
+        // Address validation
+        const address = document.getElementById("address").value.trim();
+        const addressError = document.getElementById("address-error");
+        if (address.length === 0) {
+          addressError.classList.add("show");
+          isValid = false;
+        } else {
+          addressError.classList.remove("show");
+        }
+
+        // Payment method validation
+        const paymentSelected = document.querySelector(
+          'input[name="payment"]:checked'
+        );
+        const paymentError = document.getElementById("payment-error");
+        if (!paymentSelected) {
+          paymentError.classList.add("show");
+          isValid = false;
+        } else {
+          paymentError.classList.remove("show");
+        }
+
+        // Cart validation
+        if (cart.length === 0) {
+          alert("Your cart is empty. Please add items before checking out.");
+          return false;
+        }
+
+        return isValid;
+      }
+
+      // Submit order
+      function submitOrder() {
+        if (validateForm()) {
+          // Show success message
+          document.getElementById("success-notification").classList.add("show");
+
+          // Scroll to success message
+          document
+            .getElementById("success-notification")
+            .scrollIntoView({ behavior: "smooth" });
+
+          // Optionally, clear form and cart after 3 seconds
+          setTimeout(() => {
+            // Reset can be implemented here if needed
+          }, 3000);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Concert Booking — Checkout</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: none;
+      }
+      .disabled {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .seat {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        margin: 3px;
+        text-align: center;
+        border: 1px solid #ccc;
+        cursor: pointer;
+      }
+      .seat.available {
+        background: #f7f7f7;
+      }
+      .seat.selected {
+        background: #5cb85c;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Concert Booking — Checkout</h1>
+
+    <div id="confirmation" class="success" role="status" aria-live="polite">
+      Booking Confirmed!
+    </div>
+
+    <form id="bookingForm" novalidate>
+      <fieldset>
+        <legend>Tickets</legend>
+
+        <label for="ticketType">Ticket Type</label>
+        <select id="ticketType" name="ticketType" required>
+          <option value="GEN">General Admission</option>
+          <option value="RES">Reserved Seat</option>
+          <option value="VIP">VIP</option>
+        </select>
+
+        <label for="quantity">Quantity</label>
+        <input
+          id="quantity"
+          name="quantity"
+          type="number"
+          min="1"
+          value="1"
+          required
+        />
+
+        <div id="seatSection" aria-hidden="true">
+          <p>Select Seat (Reserved only):</p>
+          <div id="seatMap" aria-live="polite">
+            <!-- Seats are rendered here -->
+          </div>
+          <div
+            id="seatError"
+            class="error"
+            role="alert"
+            style="display: none"
+          ></div>
+        </div>
+
+        <label for="coupon">Discount Code</label>
+        <input id="coupon" name="coupon" type="text" placeholder="Enter code" />
+        <button id="applyCoupon" type="button">Apply</button>
+        <div id="couponResult" role="status" aria-live="polite"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Contact Details</legend>
+        <label for="name">Full Name *</label>
+        <input id="name" name="name" type="text" required />
+        <div
+          id="nameError"
+          class="error"
+          role="alert"
+          style="display: none"
+        ></div>
+
+        <label for="email">Email *</label>
+        <input id="email" name="email" type="email" required />
+        <div
+          id="emailError"
+          class="error"
+          role="alert"
+          style="display: none"
+        ></div>
+
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" name="phone" type="tel" />
+        <div
+          id="phoneError"
+          class="error"
+          role="alert"
+          style="display: none"
+        ></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Payment</legend>
+        <label>Payment Method</label>
+        <label
+          ><input type="radio" name="payment" value="CreditCard" checked />
+          Credit Card</label
+        >
+        <label
+          ><input type="radio" name="payment" value="PayPal" /> PayPal</label
+        >
+
+        <div id="cardDetails">
+          <label for="cardNumber">Card Number</label>
+          <input
+            id="cardNumber"
+            name="cardNumber"
+            type="text"
+            maxlength="19"
+            placeholder="1234 5678 9012 3456"
+          />
+
+          <label for="expiry">Expiry (MM/YY)</label>
+          <input id="expiry" name="expiry" type="text" placeholder="MM/YY" />
+
+          <label for="cvv">CVV</label>
+          <input id="cvv" name="cvv" type="text" maxlength="4" />
+        </div>
+      </fieldset>
+
+      <label
+        ><input id="terms" type="checkbox" /> I agree to the Terms & Conditions
+        *</label
+      >
+      <div
+        id="termsError"
+        class="error"
+        role="alert"
+        style="display: none"
+      ></div>
+
+      <div>
+        <button id="submitBtn" type="submit" class="disabled" disabled>
+          Submit Booking
+        </button>
+      </div>
+
+      <div id="formSummary" role="status" aria-live="polite"></div>
+    </form>
+
+    <script>
+      // Minimal JS to illustrate validation + seat rendering (no backend)
+      const seatMapEl = document.getElementById("seatMap");
+      const seatSection = document.getElementById("seatSection");
+      const ticketType = document.getElementById("ticketType");
+      const quantity = document.getElementById("quantity");
+      const submitBtn = document.getElementById("submitBtn");
+      const terms = document.getElementById("terms");
+
+      // simple seat layout
+      const seats = [];
+      for (let r = 0; r < 3; r++) {
+        const row = String.fromCharCode(65 + r);
+        for (let s = 1; s <= 8; s++) {
+          seats.push({ row, seat: s, available: Math.random() > 0.2 });
+        }
+      }
+
+      function renderSeats() {
+        seatMapEl.innerHTML = "";
+        seats.forEach((s) => {
+          const btn = document.createElement("button");
+          btn.className = "seat " + (s.available ? "available" : "");
+          btn.textContent = s.seat;
+          btn.setAttribute("data-row", s.row);
+          btn.setAttribute("data-seat", s.seat);
+          btn.setAttribute(
+            "aria-label",
+            `Seat ${s.row}${s.seat} ${
+              s.available ? "available" : "unavailable"
+            }`
+          );
+          if (!s.available) btn.disabled = true;
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll(".seat.selected")
+              .forEach((x) => x.classList.remove("selected"));
+            btn.classList.add("selected");
+            document.getElementById("seatError").style.display = "none";
+            validateForm();
+          });
+          seatMapEl.appendChild(btn);
+        });
+      }
+
+      renderSeats();
+
+      function showError(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.style.display = msg ? "block" : "none";
+      }
+
+      function validateForm() {
+        // Name
+        const nameValid =
+          document.getElementById("name").value.trim().length >= 2;
+        showError(
+          "nameError",
+          nameValid ? "" : "Name must be at least 2 characters."
+        );
+
+        // Email
+        const email = document.getElementById("email").value;
+        const emailValid = /\S+@\S+\.\S+/.test(email);
+        showError("emailError", emailValid ? "" : "Enter a valid email.");
+
+        // Phone optional
+        const phone = document.getElementById("phone").value.trim();
+        const phoneValid = !phone || /^\d{10}$/.test(phone);
+        showError("phoneError", phoneValid ? "" : "Phone must be 10 digits.");
+
+        // Quantity rules
+        const q = parseInt(quantity.value, 10) || 1;
+        let max = 6;
+        if (ticketType.value === "RES") max = 4;
+        if (ticketType.value === "VIP") max = 2;
+        if (q > max)
+          showError("seatError", `Maximum ${max} tickets allowed per booking.`);
+        else showError("seatError", "");
+
+        // Terms
+        const termsOk = terms.checked;
+        showError(
+          "termsError",
+          termsOk ? "" : "You must agree to Terms & Conditions."
+        );
+
+        // Seat required for Reserved
+        if (ticketType.value === "RES") {
+          seatSection.style.display = "block";
+          const selected = document.querySelector(".seat.selected");
+          if (!selected) showError("seatError", "Please select a seat.");
+        } else {
+          seatSection.style.display = "none";
+          showError("seatError", "");
+        }
+
+        const allValid =
+          nameValid &&
+          emailValid &&
+          phoneValid &&
+          termsOk &&
+          (ticketType.value !== "RES" ||
+            document.querySelector(".seat.selected"));
+        submitBtn.disabled = !allValid;
+        submitBtn.classList.toggle("disabled", !allValid);
+      }
+
+      // event listeners
+      ["input", "change", "blur"].forEach((ev) => {
+        document
+          .getElementById("bookingForm")
+          .addEventListener(ev, validateForm, true);
+      });
+
+      document.getElementById("applyCoupon").addEventListener("click", () => {
+        const code = document.getElementById("coupon").value.trim();
+        const res = document.getElementById("couponResult");
+        if (code === "SAVE10") {
+          res.textContent = "10% saved!";
+        } else if (code === "FREETIER") {
+          res.textContent = "Service fee waived for General Admission.";
+        } else {
+          res.textContent = "Invalid or expired coupon";
+        }
+      });
+
+      document.getElementById("bookingForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        // simulate payment success
+        document.getElementById("confirmation").style.display = "block";
+        document.getElementById("formSummary").textContent =
+          "Booking reference: BK-123456";
+        window.scrollTo(0, 0);
+      });
+
+      // initialize
+      validateForm();
+    </script>
+  </body>
+</html>

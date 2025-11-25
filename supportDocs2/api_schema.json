@@ -1,0 +1,49 @@
+{
+  "POST /apply_coupon": {
+    "request": { "code": "string" },
+    "response": {
+      "status": "ok|invalid",
+      "discount_amount": "number",
+      "message": "string"
+    }
+  },
+  "GET /seats": {
+    "params": { "event_id": "string" },
+    "response": { "seats": [{ "row": "A", "seat": 1, "available": true }] }
+  },
+  "POST /hold_seat": {
+    "request": {
+      "event_id": "string",
+      "seat": { "row": "string", "seat": "number" },
+      "hold_for_seconds": "integer"
+    },
+    "response": {
+      "status": "held|error",
+      "hold_id": "string",
+      "expires_at": "ISO8601"
+    }
+  },
+  "POST /submit_booking": {
+    "request": {
+      "event_id": "string",
+      "tickets": [
+        {
+          "type": "GEN|RES|VIP",
+          "seat": { "row": "string", "seat": "number" },
+          "quantity": "integer"
+        }
+      ],
+      "contact": { "name": "string", "email": "string", "phone": "string" },
+      "payment": {
+        "method": "CreditCard|PayPal",
+        "card": { "number": "string", "expiry": "MM/YY", "cvv": "string" }
+      },
+      "coupon": "string|null"
+    },
+    "response": {
+      "status": "success|failed",
+      "booking_id": "string",
+      "message": "string"
+    }
+  }
+}
